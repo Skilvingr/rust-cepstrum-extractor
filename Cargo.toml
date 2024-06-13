@@ -1,0 +1,18 @@
+[package]
+name = "cepstrum-extractor"
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+authors = ["Skilfingr <skilvingr@gmail.com>"]
+
+description = "A simple lock-free SPSC ring buffer, with in-place mutability." #fillme
+repository = "https://github.com/Skilvingr/rust-cepstrum-extractor"
+license = "MIT OR Apache-2.0"
+keywords = ["lock-free", "async", "ring", "circular", "buffer"] #fillme
+categories = ["asynchronous", "concurrency", "data-structures", "no-std", "no-std::no-alloc"] #fillme
+documentation = "https://docs.rs/cepstrum-extractor"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rustfft = "6.2.0"

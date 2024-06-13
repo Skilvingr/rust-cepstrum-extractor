@@ -1,0 +1,4 @@
+#!/bin/bash
+
+MIRIFLAGS="-Zmiri-disable-isolation ${MIRIFLAGS:-}"\
+    cargo +nightly miri test
