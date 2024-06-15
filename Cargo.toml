@@ -5,14 +5,19 @@ edition = "2021"
 readme = "README.md"
 authors = ["Skilfingr <skilvingr@gmail.com>"]
 
-description = "A simple lock-free SPSC ring buffer, with in-place mutability." #fillme
+description = "An easy-to-use crate to compute the cepstrum of a signal."
 repository = "https://github.com/Skilvingr/rust-cepstrum-extractor"
 license = "MIT OR Apache-2.0"
-keywords = ["lock-free", "async", "ring", "circular", "buffer"] #fillme
-categories = ["asynchronous", "concurrency", "data-structures", "no-std", "no-std::no-alloc"] #fillme
+keywords = ["cepstrum", "extractor", "cepstral", "quefrency", "audio"]
+categories = ["multimedia", "multimedia::audio", "science"]
 documentation = "https://docs.rs/cepstrum-extractor"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 rustfft = "6.2.0"
+
+[dev-dependencies]
+rayon = "1.10.0"
+
+[target.'cfg(examples)'.dev-dependencies]
+minifb = "0.27.0"
+plotters = "0.3.6"

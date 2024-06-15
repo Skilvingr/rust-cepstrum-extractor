@@ -1,11 +1,12 @@
 use std::ptr;
 use std::sync::{Arc, RwLock};
 
-use rustfft::{Fft, FftNum, FftPlanner};
+use rustfft::{Fft, FftPlanner};
 use rustfft::num_complex::Complex;
 use rustfft::num_traits::Zero;
+use crate::CepFloat;
 
-pub struct CepFft<T: FftNum> {
+pub struct CepFft<T: CepFloat> {
     len: usize,
     scratches: RwLock<Vec<Vec<Complex<T>>>>,
 
@@ -13,7 +14,7 @@ pub struct CepFft<T: FftNum> {
     ifft_instance: Arc<dyn Fft<T>>
 }
 
-impl<T: FftNum> CepFft<T> {
+impl<T: CepFloat> CepFft<T> {
     pub fn new(len: usize) -> CepFft<T> {
         let mut fft_planner = FftPlanner::<T>::new();
 
@@ -70,16 +71,20 @@ impl<T: FftNum> CepFft<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::fft::CepFft;
+    use super::CepFft;
 
     #[test]
     fn check_scratches() {
         let inst: CepFft<f32> = CepFft::new(10);
 
-        assert_eq!(inst.available_instances(), 1);
+        assert_eq!(inst.scratches.read().unwrap().len(), 1);
 
         inst.extend_scratches(10);
 
-        assert_eq!(inst.available_instances(), 10);
+        assert_eq!(inst.scratches.read().unwrap().len(), 10);
+
+        inst.extend_scratches(9);
+
+        assert_eq!(inst.scratches.read().unwrap().len(), 10);
     }
 }

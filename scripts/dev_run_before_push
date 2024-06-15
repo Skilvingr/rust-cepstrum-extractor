@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./miri_tests &&
+RUSTFLAGS="--cfg examples" cargo build --example simple &&
+cd .. && MIRIFLAGS="-Zmiri-disable-isolation ${MIRIFLAGS:-}" cargo +nightly miri run --example concurrent
