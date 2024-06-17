@@ -102,6 +102,11 @@ impl<T: CepFloat> CepstrumExtractor<T> {
         }
     }
 
+    /// Sets the length of the window to `len`.
+    pub fn set_len(&mut self, len: usize) {
+        self.fft_instance.set_len(len);
+    }
+
     /// Increases the number of instances available for parallel computing to `new_count`.
     pub fn extend_instances(&self, new_count: usize) {
         self.fft_instance.extend_scratches(new_count);

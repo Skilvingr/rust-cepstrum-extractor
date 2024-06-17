@@ -60,7 +60,7 @@ cargo test
 
 Concurrent example can be run with:
 ```shell
-run --example concurrent
+cargo run --example concurrent
 ```
 
 Other examples can be run with:

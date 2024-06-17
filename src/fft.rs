@@ -29,6 +29,13 @@ impl<T: CepFloat> CepFft<T> {
         }
     }
 
+    pub fn set_len(&mut self, len: usize) {
+        let mut fft_planner = FftPlanner::<T>::new();
+
+        self.fft_instance = fft_planner.plan_fft_forward(len);
+        self.ifft_instance = fft_planner.plan_fft_inverse(len);
+    }
+
     pub fn extend_scratches(&self, new_count: usize) {
         let mut s = self.scratches.write().unwrap();
         let len = s.len();
