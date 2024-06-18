@@ -1,8 +1,10 @@
-use rustfft::num_complex::Complex;
-use rustfft::num_traits::Num;
+use std::convert::From;
 
-/// Trait used to prepare a slice to be passed to the extractor.
-/// Currently implemented for `f32` and `f64`.
+use rustfft::num_complex::Complex;
+
+use crate::num_traits::{AsPrimitive, Float, FloatConst};
+
+/// Trait used to prepare a slice of reals to be passed to the extractor.
 pub trait Hann<T> {
     /// Applies a Hann window, modifying the slice.
     fn apply_hann_window(&mut self) -> &mut [T];
@@ -10,64 +12,90 @@ pub trait Hann<T> {
     fn apply_hann_window_complex(&self) -> Vec<Complex<T>>;
 }
 
+/// Trait used to prepare a slice of complex to be passed to the extractor.
+pub trait HannComplex<T> {
+    /// Applies a Hann window, returning a new vec of complex.
+    fn apply_hann_window(&self) -> Vec<Complex<T>>;
+
+    /// Applies a Hann window, mutating the slice.
+    fn apply_hann_window_complex_mut(&mut self) -> &mut [Complex<T>];
+}
+
 #[inline(always)]
-fn hann_complex<T: Clone + Copy + Num>(this: &[T], f: fn(&T, usize, usize) -> T) -> Vec<Complex<T>> {
+fn _hann<T: Float + FloatConst + 'static>(sample: &T, i: usize, len: usize) -> T
+    where usize: AsPrimitive<T>,
+          f32: AsPrimitive<T>
+{
+    *sample * (
+        0.5f32.as_() - (
+            0.5f32.as_() * (
+                T::PI() * 2f32.as_() * i.as_() / (len - 1).as_()
+            ).cos()
+        )
+    )
+}
+
+#[inline(always)]
+fn hann_complex<T: Copy + Float + FloatConst + 'static>(this: &[T]) -> Vec<Complex<T>>
+    where usize: AsPrimitive<T>,
+          f32: AsPrimitive<T>
+{
     this.iter().enumerate().fold(Vec::with_capacity(this.len()), |mut acc, (i, sample)| {
-        acc.push(Complex::from(f(sample, i, this.len())));
+        acc.push(Complex::from(_hann(sample, i, this.len())));
 
         acc
     })
 }
 #[inline(always)]
-fn hann<T: Clone + Copy + Num>(this: &mut [T], f: fn(&T, usize, usize) -> T) {
+fn hann<T: Copy + Float + FloatConst + 'static>(this: &mut [T])
+    where usize: AsPrimitive<T>,
+          f32: AsPrimitive<T>
+{
     let len = this.len();
     for (i, el) in this.iter_mut().enumerate() {
-        *el = f(el, i, len)
+        *el = _hann(el, i, len)
     }
 }
 
-#[inline(always)]
-fn _hann_f32(sample: &f32, i: usize, len: usize) -> f32 {
-    sample * (
-        0.5 - (
-            0.5 * (
-                core::f32::consts::PI * 2. * i as f32 / (len - 1) as f32
-            ).cos()
-        )
-    )
-}
-#[inline(always)]
-fn _hann_f64(sample: &f64, i: usize, len: usize) -> f64 {
-    sample * (
-        0.5 - (
-            0.5 * (
-                core::f64::consts::PI * 2. * i as f64 / (len - 1) as f64
-            ).cos()
-        )
-    )
-}
-
-
-impl Hann<f32> for [f32] {
-    fn apply_hann_window(&mut self) -> &mut [f32] {
-        hann(self, _hann_f32);
+impl<T: Float + FloatConst + 'static> Hann<T> for [T]
+    where usize: AsPrimitive<T>,
+          f32: AsPrimitive<T>
+{
+    #[inline]
+    fn apply_hann_window(&mut self) -> &mut [T] {
+        hann(self);
         self
     }
 
     #[inline]
-    fn apply_hann_window_complex(&self) -> Vec<Complex<f32>> {
-        hann_complex(self, _hann_f32)
+    fn apply_hann_window_complex(&self) -> Vec<Complex<T>> {
+        hann_complex(self)
     }
 }
 
-impl Hann<f64> for [f64] {
-    fn apply_hann_window(&mut self) -> &mut [f64] {
-        hann(self, _hann_f64);
-        self
+impl<T: Float + FloatConst + 'static> HannComplex<T> for [Complex<T>]
+    where usize: AsPrimitive<T>,
+          f32: AsPrimitive<T>
+{
+    #[inline]
+    fn apply_hann_window(&self) -> Vec<Complex<T>> {
+        self.iter().enumerate().fold(Vec::with_capacity(self.len()), |mut acc, (i, sample)| {
+            let mut el = sample.clone();
+            el.re = _hann(&sample.re, i, self.len());
+            acc.push(el);
+
+            acc
+        })
     }
 
     #[inline]
-    fn apply_hann_window_complex(&self) -> Vec<Complex<f64>> {
-        hann_complex(self, _hann_f64)
+    fn apply_hann_window_complex_mut(&mut self) -> &mut [Complex<T>] {
+        let len = self.len();
+
+        self.iter_mut().enumerate().for_each(|(i, sample)| {
+            sample.re = _hann(&sample.re, i, len);
+        });
+
+        self
     }
 }

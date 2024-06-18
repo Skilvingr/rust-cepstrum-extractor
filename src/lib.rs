@@ -7,13 +7,14 @@ use rustfft::num_traits::{Float, FloatConst};
 
 pub use cepstrum::CepstrumExtractor;
 pub use conversions::{ComplexToReal, RealToComplex};
-pub use windows::hann::Hann;
+pub use windows::hann::{Hann, HannComplex};
 
 mod fft;
 mod cepstrum;
 mod windows;
 mod conversions;
 
+/// Trait implemented for types that can be used with the extractor. Currently, `f32` and `f64`.
 pub trait CepFloat: FftNum + Float + FloatConst {}
 
 impl CepFloat for f32 {}

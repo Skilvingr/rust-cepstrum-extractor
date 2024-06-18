@@ -13,7 +13,7 @@ pub trait ComplexToReal<T> {
 }
 
 #[inline(always)]
-pub fn real_to_complex<T: Clone + Copy + Num>(this: &[T]) -> Vec<Complex<T>> {
+pub fn real_to_complex<T: Copy + Num>(this: &[T]) -> Vec<Complex<T>> {
     this.iter().fold(Vec::with_capacity(this.len()), |mut acc, sample| {
         acc.push(Complex::from(*sample));
 
@@ -22,7 +22,7 @@ pub fn real_to_complex<T: Clone + Copy + Num>(this: &[T]) -> Vec<Complex<T>> {
 }
 
 #[inline(always)]
-pub fn complex_to_real<T: Clone + Copy + Num>(this: &[Complex<T>]) -> Vec<T> {
+pub fn complex_to_real<T: Copy + Num>(this: &[Complex<T>]) -> Vec<T> {
     this.iter().fold(Vec::with_capacity(this.len()), |mut acc, sample| {
         acc.push(sample.re);
 
@@ -30,28 +30,15 @@ pub fn complex_to_real<T: Clone + Copy + Num>(this: &[Complex<T>]) -> Vec<T> {
     })
 }
 
-impl RealToComplex<f32> for [f32] {
+impl<T: Copy + Num> RealToComplex<T> for [T] {
     #[inline(always)]
-    fn to_complex_vec(&self) -> Vec<Complex<f32>> {
+    fn to_complex_vec(&self) -> Vec<Complex<T>> {
         real_to_complex(self)
     }
 }
-impl ComplexToReal<f32> for [Complex<f32>] {
+impl<T: Copy + Num> ComplexToReal<T> for [Complex<T>] {
     #[inline(always)]
-    fn to_real_vec(&self) -> Vec<f32> {
-        complex_to_real(self)
-    }
-}
-
-impl RealToComplex<f64> for [f64] {
-    #[inline(always)]
-    fn to_complex_vec(&self) -> Vec<Complex<f64>> {
-        real_to_complex(self)
-    }
-}
-impl ComplexToReal<f64> for [Complex<f64>] {
-    #[inline(always)]
-    fn to_real_vec(&self) -> Vec<f64> {
+    fn to_real_vec(&self) -> Vec<T> {
         complex_to_real(self)
     }
 }
