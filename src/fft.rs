@@ -1,4 +1,4 @@
-use std::ptr;
+use std::{iter, ptr};
 use std::sync::{Arc, RwLock};
 
 use rustfft::{Fft, FftPlanner};
@@ -32,8 +32,16 @@ impl<T: CepFloat> CepFft<T> {
     pub fn set_len(&mut self, len: usize) {
         let mut fft_planner = FftPlanner::<T>::new();
 
+        for i in self.scratches.write().unwrap().iter_mut() {
+            if len > i.len() {
+                i.extend(iter::repeat(Complex::zero()).take(len - i.len()));
+            }
+        }
+
         self.fft_instance = fft_planner.plan_fft_forward(len);
         self.ifft_instance = fft_planner.plan_fft_inverse(len);
+
+        self.len = len;
     }
 
     pub fn extend_scratches(&self, new_count: usize) {
@@ -42,7 +50,7 @@ impl<T: CepFloat> CepFft<T> {
 
         if new_count > s.len() {
             s.extend(
-                (0..new_count - len).map(|_| vec![Complex::zero(); self.fft_instance.get_inplace_scratch_len()])
+                iter::repeat(vec![Complex::zero(); self.fft_instance.get_inplace_scratch_len()]).take(new_count - len)
             )
         }
     }
@@ -80,9 +88,11 @@ impl<T: CepFloat> CepFft<T> {
 mod tests {
     use super::CepFft;
 
+    const LEN: usize = 10;
+
     #[test]
     fn check_scratches() {
-        let inst: CepFft<f32> = CepFft::new(10);
+        let mut inst: CepFft<f32> = CepFft::new(LEN);
 
         assert_eq!(inst.scratches.read().unwrap().len(), 1);
 
@@ -93,5 +103,11 @@ mod tests {
         inst.extend_scratches(9);
 
         assert_eq!(inst.scratches.read().unwrap().len(), 10);
+
+        assert!(inst.scratches.read().unwrap().iter().all(|s| s.len() == inst.len && s.len() == LEN));
+
+        inst.set_len(LEN * 2);
+
+        assert!(inst.scratches.read().unwrap().iter().all(|s| s.len() == inst.len && s.len() == LEN * 2));
     }
 }
