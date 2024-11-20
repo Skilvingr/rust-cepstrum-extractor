@@ -128,8 +128,7 @@ impl<T: CepFloat> CepstrumExtractor<T> {
     /// Extract the real cepstrum placing the result in a new vec.
     /// Such a vec will be already truncated to half `signal.len()`.
     pub fn rceps_to_vec(&self, signal: &[Complex<T>]) -> Vec<Complex<T>> {
-        let mut copied = Vec::with_capacity(signal.len());
-        copied.extend_from_slice(signal);
+        let mut copied = signal.to_vec();
 
         self.rceps_with_instance_mut(&mut copied, 0);
         copied.truncate(copied.len() / 2);
@@ -153,8 +152,7 @@ impl<T: CepFloat> CepstrumExtractor<T> {
 
     /// As [`Self::rceps_to_vec`], but uses the passed instance at index `instance`.
     pub fn rceps_with_instance_to_vec(&self, signal: &[Complex<T>], instance: usize) -> Vec<Complex<T>> {
-        let mut copied = Vec::with_capacity(signal.len());
-        copied.extend_from_slice(signal);
+        let mut copied = signal.to_vec();
 
         self.rceps_with_instance_mut(&mut copied, instance);
         copied.truncate(copied.len() / 2);
@@ -178,8 +176,7 @@ impl<T: CepFloat> CepstrumExtractor<T> {
     /// Extract the complex cepstrum placing the result in a new vec.
     /// Such a vec will be already truncated to half `signal.len()`.
     pub fn cceps_to_vec(&self, signal: &[Complex<T>]) -> Vec<Complex<T>> {
-        let mut copied = Vec::with_capacity(signal.len());
-        copied.extend_from_slice(signal);
+        let mut copied = signal.to_vec();
 
         self.rceps_with_instance_mut(&mut copied, 0);
         copied.truncate(copied.len() / 2);
@@ -203,8 +200,7 @@ impl<T: CepFloat> CepstrumExtractor<T> {
 
     /// As [`Self::cceps_to_vec`], but uses the passed instance at index `instance`.
     pub fn cceps_with_instance_to_vec(&self, signal: &[Complex<T>], instance: usize) -> Vec<Complex<T>> {
-        let mut copied = Vec::with_capacity(signal.len());
-        copied.extend_from_slice(signal);
+        let mut copied = signal.to_vec();
 
         self.rceps_with_instance_mut(&mut copied, instance);
         copied.truncate(copied.len() / 2);
