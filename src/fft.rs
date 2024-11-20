@@ -8,6 +8,7 @@ use crate::CepFloat;
 
 pub struct CepFft<T: CepFloat> {
     len: usize,
+    scratch_len: usize,
     scratches: RwLock<Vec<Vec<Complex<T>>>>,
 
     fft_instance: Arc<dyn Fft<T>>,
@@ -22,6 +23,7 @@ impl<T: CepFloat> CepFft<T> {
 
         CepFft {
             len,
+            scratch_len: fft_instance.get_inplace_scratch_len(),
             scratches: RwLock::new(vec![vec![Complex::zero(); fft_instance.get_inplace_scratch_len()]]),
 
             fft_instance,
@@ -30,17 +32,26 @@ impl<T: CepFloat> CepFft<T> {
     }
 
     pub fn set_len(&mut self, len: usize) {
-        let mut fft_planner = FftPlanner::<T>::new();
-
-        for i in self.scratches.write().unwrap().iter_mut() {
-            if len > i.len() {
-                i.extend(iter::repeat(Complex::zero()).take(len - i.len()));
-            }
+        if len == self.len {
+            return;
         }
+
+        let mut fft_planner = FftPlanner::<T>::new();
 
         self.fft_instance = fft_planner.plan_fft_forward(len);
         self.ifft_instance = fft_planner.plan_fft_inverse(len);
 
+        let new_scratches_len = self.fft_instance.get_inplace_scratch_len();
+
+        for i in self.scratches.write().unwrap().iter_mut() {
+            if new_scratches_len > i.len() {
+                i.extend(iter::repeat(Complex::zero()).take(new_scratches_len - i.len()));
+            } else {
+                i.truncate(new_scratches_len);
+            }
+        }
+
+        self.scratch_len = new_scratches_len;
         self.len = len;
     }
 
@@ -50,7 +61,7 @@ impl<T: CepFloat> CepFft<T> {
 
         if new_count > s.len() {
             s.extend(
-                iter::repeat(vec![Complex::zero(); self.fft_instance.get_inplace_scratch_len()]).take(new_count - len)
+                iter::repeat(vec![Complex::zero(); self.scratch_len]).take(new_count - len)
             )
         }
     }
@@ -62,7 +73,7 @@ impl<T: CepFloat> CepFft<T> {
                 self.scratches.write().map(|mut scratches| {
                     scratches[i].as_mut_ptr()
                 }).unwrap(),
-                self.len
+                self.scratch_len
             )
         }
     }

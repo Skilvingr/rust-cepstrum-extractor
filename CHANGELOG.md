@@ -1,5 +1,6 @@
 <a name="v0.1.4"></a>
-## v0.1.4 (Unreleased)
+## v0.1.4 (20/11/2024)
+- Fix another bug in set_len.
 
 <a name="v0.1.3"></a>
 ## v0.1.3 (30/10/2024)
