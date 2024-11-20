@@ -23,13 +23,14 @@ pub trait HannComplex<T> {
 
 #[inline(always)]
 fn _hann<T: Float + FloatConst + 'static>(sample: &T, i: usize, len: usize) -> T
-    where usize: AsPrimitive<T>,
-          f32: AsPrimitive<T>
+where usize: AsPrimitive<T>,
+      f32: AsPrimitive<T>,
+      f64: AsPrimitive<T>
 {
     *sample * (
-        0.5f32.as_() - (
-            0.5f32.as_() * (
-                T::PI() * 2f32.as_() * i.as_() / (len - 1).as_()
+        0.5.as_() - (
+            0.5.as_() * (
+                T::PI() * 2.as_() * i.as_() / (len - 1).as_()
             ).cos()
         )
     )
@@ -38,7 +39,8 @@ fn _hann<T: Float + FloatConst + 'static>(sample: &T, i: usize, len: usize) -> T
 #[inline(always)]
 fn hann_complex<T: Copy + Float + FloatConst + 'static>(this: &[T]) -> Vec<Complex<T>>
     where usize: AsPrimitive<T>,
-          f32: AsPrimitive<T>
+          f32: AsPrimitive<T>,
+          f64: AsPrimitive<T>
 {
     this.iter().enumerate().fold(Vec::with_capacity(this.len()), |mut acc, (i, sample)| {
         acc.push(Complex::from(_hann(sample, i, this.len())));
@@ -49,7 +51,8 @@ fn hann_complex<T: Copy + Float + FloatConst + 'static>(this: &[T]) -> Vec<Compl
 #[inline(always)]
 fn hann<T: Copy + Float + FloatConst + 'static>(this: &mut [T])
     where usize: AsPrimitive<T>,
-          f32: AsPrimitive<T>
+          f32: AsPrimitive<T>,
+          f64: AsPrimitive<T>
 {
     let len = this.len();
     for (i, el) in this.iter_mut().enumerate() {
@@ -59,7 +62,8 @@ fn hann<T: Copy + Float + FloatConst + 'static>(this: &mut [T])
 
 impl<T: Float + FloatConst + 'static> Hann<T> for [T]
     where usize: AsPrimitive<T>,
-          f32: AsPrimitive<T>
+          f32: AsPrimitive<T>,
+          f64: AsPrimitive<T>
 {
     #[inline]
     fn apply_hann_window(&mut self) -> &mut [T] {
@@ -75,7 +79,8 @@ impl<T: Float + FloatConst + 'static> Hann<T> for [T]
 
 impl<T: Float + FloatConst + 'static> HannComplex<T> for [Complex<T>]
     where usize: AsPrimitive<T>,
-          f32: AsPrimitive<T>
+          f32: AsPrimitive<T>,
+          f64: AsPrimitive<T>
 {
     #[inline]
     fn apply_hann_window(&self) -> Vec<Complex<T>> {
