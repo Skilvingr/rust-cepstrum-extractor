@@ -1,4 +1,5 @@
-#[cfg(examples)]
+use std::env;
+
 fn main() {
     use std::fs;
     use std::ops::Range;
@@ -85,8 +86,9 @@ fn main() {
 
     let mut signal: Vec<f32> = vec![];
 
+    let crate_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     // Load a file of 1_000_000 samples into signal.
-    for line in fs::read_to_string("assets/white_noise.txt").unwrap().lines() {
+    for line in fs::read_to_string(format!("{crate_dir}/assets/white_noise.txt")).unwrap().lines() {
         signal.push(f32::from_str(line).unwrap());
     }
 
@@ -106,10 +108,4 @@ fn main() {
 
     // There's a peak at SHIFT.
     draw_cepstrum(&cepstrum[0..cepstrum.len() / 2]);
-}
-
-#[cfg(not(examples))]
-pub fn main() {
-    eprintln!("To run this example, please, use the following command:");
-    println!("RUSTFLAGS=\"--cfg examples\" cargo run --example simple");
 }

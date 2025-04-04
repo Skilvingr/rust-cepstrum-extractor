@@ -1,17 +1,18 @@
 use std::str::FromStr;
 use std::sync::{Arc, RwLock};
-use std::{fs, thread};
+use std::{env, fs, thread};
 use cepstrum_extractor::{CepstrumExtractor, RealToComplex};
 
 const SHIFT: usize = 20;
 const WIN_LEN: usize = 128;
-const THREADS: usize = 5;
+const THREADS: usize = 16;
 
 fn main() {
     let mut signal: Vec<f32> = vec![];
 
+    let crate_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     // Load a file of 1_000_000 samples into signal.
-    for line in fs::read_to_string("assets/white_noise.txt").unwrap().lines().take(1_000) {
+    for line in fs::read_to_string(format!("{crate_dir}/assets/white_noise.txt")).unwrap().lines().take(1000) {
         signal.push(f32::from_str(line).unwrap());
     }
 
