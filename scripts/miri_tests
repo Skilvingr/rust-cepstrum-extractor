@@ -1,4 +1,6 @@
 #!/bin/bash
 
-MIRIFLAGS="-Zmiri-disable-isolation ${MIRIFLAGS:-}"\
-    cargo +nightly miri test
+export MIRIFLAGS="-Zmiri-disable-isolation ${MIRIFLAGS:-}"
+
+cargo +nightly miri test &&
+cargo +nightly miri run --example concurrent

@@ -38,7 +38,7 @@ so pay attention to what you do when using these methods.
 ### Example:
 Given a `CepstrumExtractor` with len equal to `128`, `rceps_mut` mutates the
 input slice (long 128 samples as well), but only the first `64` samples of
-the mutated slice really represent the cepstrum.
+the mutated slice actually represent the cepstrum.
 
 ## A note about multithreading:
 This crate can also be used in a concurrent environment. Only one instance
@@ -58,9 +58,14 @@ Tests can be run with:
 cargo test
 ```
 
+Benchmarks can be run with:
+```shell
+RUSTFLAGS="--cfg bench" cargo +nightly bench
+```
+
 Concurrent example can be run with:
 ```shell
-cargo run --example concurrent
+RUSTFLAGS="--cfg examples" cargo run --example concurrent
 ```
 
 Other examples can be run with:
