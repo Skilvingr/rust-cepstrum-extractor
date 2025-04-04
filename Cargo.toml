@@ -1,6 +1,6 @@
 [package]
 name = "cepstrum-extractor"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 readme = "README.md"
 authors = ["Skilfingr <skilvingr@gmail.com>"]
@@ -17,8 +17,8 @@ rustfft = "6.2.0"
 
 [dev-dependencies]
 rayon = "1.10.0"
-minifb = "0.27.0"
-plotters = "0.3.6"
+minifb = "0.28.0"
+plotters = "0.3.7"
 
 [target.'cfg(bench)'.dev-dependencies]
 criterion = { version = "0.5.1", features = ["real_blackbox"] }

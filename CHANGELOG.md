@@ -1,3 +1,8 @@
+<a name="v0.1.5"></a>
+## v0.1.5 (04/04/2025)
+- Add benchmarks.
+- Use `Mutex` instead of `RwLock`: increases performance.
+
 <a name="v0.1.4"></a>
 ## v0.1.4 (20/11/2024)
 - Fix another bug in set_len.
