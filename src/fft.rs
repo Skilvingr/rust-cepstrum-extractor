@@ -1,5 +1,5 @@
 use std::{iter, ptr};
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, Mutex};
 
 use rustfft::{Fft, FftPlanner};
 use rustfft::num_complex::Complex;
@@ -9,7 +9,7 @@ use crate::CepFloat;
 pub struct CepFft<T: CepFloat> {
     len: usize,
     scratch_len: usize,
-    scratches: RwLock<Vec<Vec<Complex<T>>>>,
+    scratches: Mutex<Vec<Vec<Complex<T>>>>,
 
     fft_instance: Arc<dyn Fft<T>>,
     ifft_instance: Arc<dyn Fft<T>>
@@ -24,7 +24,7 @@ impl<T: CepFloat> CepFft<T> {
         CepFft {
             len,
             scratch_len: fft_instance.get_inplace_scratch_len(),
-            scratches: RwLock::new(vec![vec![Complex::zero(); fft_instance.get_inplace_scratch_len()]]),
+            scratches: Mutex::new(vec![vec![Complex::zero(); fft_instance.get_inplace_scratch_len()]]),
 
             fft_instance,
             ifft_instance: fft_planner.plan_fft_inverse(len),
@@ -43,7 +43,7 @@ impl<T: CepFloat> CepFft<T> {
 
         let new_scratches_len = self.fft_instance.get_inplace_scratch_len();
 
-        for i in self.scratches.write().unwrap().iter_mut() {
+        for i in self.scratches.lock().unwrap().iter_mut() {
             if new_scratches_len > i.len() {
                 i.extend(iter::repeat(Complex::zero()).take(new_scratches_len - i.len()));
             } else {
@@ -56,7 +56,7 @@ impl<T: CepFloat> CepFft<T> {
     }
 
     pub fn extend_scratches(&self, new_count: usize) {
-        let mut s = self.scratches.write().unwrap();
+        let mut s = self.scratches.lock().unwrap();
         let len = s.len();
 
         if new_count > s.len() {
@@ -70,7 +70,7 @@ impl<T: CepFloat> CepFft<T> {
     fn retrieve_scratch(&self, i: usize) -> &mut [Complex<T>] {
         unsafe {
             &mut *ptr::slice_from_raw_parts_mut(
-                self.scratches.write().map(|mut scratches| {
+                self.scratches.lock().map(|mut scratches| {
                     scratches[i].as_mut_ptr()
                 }).unwrap(),
                 self.scratch_len
@@ -105,20 +105,20 @@ mod tests {
     fn check_scratches() {
         let mut inst: CepFft<f32> = CepFft::new(LEN);
 
-        assert_eq!(inst.scratches.read().unwrap().len(), 1);
+        assert_eq!(inst.scratches.lock().unwrap().len(), 1);
 
         inst.extend_scratches(10);
 
-        assert_eq!(inst.scratches.read().unwrap().len(), 10);
+        assert_eq!(inst.scratches.lock().unwrap().len(), 10);
 
         inst.extend_scratches(9);
 
-        assert_eq!(inst.scratches.read().unwrap().len(), 10);
+        assert_eq!(inst.scratches.lock().unwrap().len(), 10);
 
-        assert!(inst.scratches.read().unwrap().iter().all(|s| s.len() == inst.len && s.len() == LEN));
+        assert!(inst.scratches.lock().unwrap().iter().all(|s| s.len() == inst.len && s.len() == LEN));
 
         inst.set_len(LEN * 2);
 
-        assert!(inst.scratches.read().unwrap().iter().all(|s| s.len() == inst.len && s.len() == LEN * 2));
+        assert!(inst.scratches.lock().unwrap().iter().all(|s| s.len() == inst.len && s.len() == LEN * 2));
     }
 }
