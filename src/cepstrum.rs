@@ -1,3 +1,5 @@
+//! Module used to extract cepstrums.
+
 use crate::CepFloat;
 use crate::fft::CepFft;
 use crate::num_complex::{Complex, ComplexFloat};
@@ -10,14 +12,15 @@ use crate::num_complex::{Complex, ComplexFloat};
 /// ```rust
 /// use cepstrum_extractor::num_complex::Complex;
 /// use cepstrum_extractor::num_traits::Zero;
-/// use cepstrum_extractor::{CepstrumExtractor, Hann, RealToComplex};
+/// use cepstrum_extractor::{CepstrumExtractor, RealToComplex};
+/// use cepstrum_extractor::windows::hann::Hann;
 ///
 /// let extractor = CepstrumExtractor::new(10);
 ///
 /// // Different ways to obtain a vector of complex
 /// let signal: Vec<Complex<f32>> = vec![Complex::zero(); 10];
 /// let signal: Vec<Complex<f32>> = [0.; 10].to_complex_vec();
-/// let signal: Vec<Complex<f32>> = [0.; 10].apply_hann_window_complex();
+/// let signal: Vec<Complex<f32>> = [0.; 10].hann_complex();
 ///
 /// // Create new vectors of len `signal.len() / 2`
 /// let real_ceps = extractor.rceps_to_vec(&signal);

@@ -1,12 +1,13 @@
 use rustfft::num_complex::Complex;
 use rustfft::num_traits::Num;
 
-/// Performs conversions between real and complex slices.
-
+/// Used to convert a slice of `Real` into a slice of `Complex`.
 pub trait RealToComplex<T> {
     /// Produces a vec of complex, given a slice of reals.
     fn to_complex_vec(&self) -> Vec<Complex<T>>;
 }
+
+/// Used to convert a slice of `Complex` into a slice of `Real`.
 pub trait ComplexToReal<T> {
     /// Produces a vec of reals, given a slice of complex.
     fn to_real_vec(&self) -> Vec<T>;
