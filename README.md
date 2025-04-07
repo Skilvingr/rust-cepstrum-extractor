@@ -24,8 +24,8 @@ use it to compute real or complex cepstrum of a signal.
 The extractor accepts a slice of Complex as input, [`RealToComplex::to_complex_vec`]
 creates a new vec of Complex starting from a slice of `f32` or `f64`.
 
-Such slices also implement traits with windowing functions, at the moment only
-one is available: [`Hann`].
+Such slices also implement windowing functions, more info in the relating module
+[`windows`]
 
 ## A note about the length of the results:
 As for spectrums, only the first half of the result of a fft has meaningful
