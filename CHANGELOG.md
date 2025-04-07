@@ -1,3 +1,8 @@
+<a name="v0.2.0"></a>
+## v0.2.0 (unreleased)
+- `Hann` window has been fixed and moved to `windows::hann:Hann`.
+- Added `Hamming` window.
+
 <a name="v0.1.5"></a>
 ## v0.1.5 (04/04/2025)
 - Add benchmarks.
