@@ -15,20 +15,12 @@ pub trait ComplexToReal<T> {
 
 #[inline(always)]
 pub fn real_to_complex<T: Copy + Num>(this: &[T]) -> Vec<Complex<T>> {
-    this.iter().fold(Vec::with_capacity(this.len()), |mut acc, sample| {
-        acc.push(Complex::from(*sample));
-
-        acc
-    })
+    this.iter().map(|r| Complex::from(r)).collect()
 }
 
 #[inline(always)]
 pub fn complex_to_real<T: Copy + Num>(this: &[Complex<T>]) -> Vec<T> {
-    this.iter().fold(Vec::with_capacity(this.len()), |mut acc, sample| {
-        acc.push(sample.re);
-
-        acc
-    })
+    this.iter().map(|c| c.re).collect()
 }
 
 impl<T: Copy + Num> RealToComplex<T> for [T] {
