@@ -68,11 +68,12 @@ impl<T: CepFloat> CepFft<T> {
 
     #[inline(always)]
     fn retrieve_scratch(&self, i: usize) -> &mut [Complex<T>] {
+        let mut scratches = self.scratches.lock().unwrap();
+        assert!(i < scratches.len(), "Index out of bounds: {}", i);
+
         unsafe {
             &mut *ptr::slice_from_raw_parts_mut(
-                self.scratches.lock().map(|mut scratches| {
-                    scratches[i].as_mut_ptr()
-                }).unwrap(),
+                scratches.get_unchecked_mut(i).as_mut_ptr(),
                 self.scratch_len
             )
         }
