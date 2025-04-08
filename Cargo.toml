@@ -16,17 +16,20 @@ documentation = "https://docs.rs/cepstrum-extractor"
 rustfft = "6.2.0"
 
 [dev-dependencies]
+divan = "0.1.18"
 rayon = "1.10.0"
 minifb = "0.28.0"
 plotters = "0.3.7"
-
-[target.'cfg(bench)'.dev-dependencies]
-criterion = { version = "0.5.1", features = ["real_blackbox"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(bench)'] }
 
 [[bench]]
-name = "bench_main"
-path = "benches/bench_main.rs"
+name = "main"
 harness = false
+
+[[example]]
+name = "simple"
+
+[[example]]
+name = "concurrent"
