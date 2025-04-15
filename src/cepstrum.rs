@@ -4,7 +4,7 @@ use crate::CepFloat;
 use crate::fft::CepFft;
 use crate::num_complex::{Complex, ComplexFloat};
 
-/// The main struct of this crate; can be used to extract both complex and real cepstrums out of a signal.
+/// The main struct of this crate; can be used to extract both complex and real cepstrums from a signal.
 ///
 /// As far as possible, when used multiple times, this struct will try to re-use internal data.
 ///
@@ -37,19 +37,17 @@ use crate::num_complex::{Complex, ComplexFloat};
 /// ```
 ///
 /// # Use in a concurrent environment
-/// This extractor can be put in an Arc to be shared between different threads.
-/// So one could use plain threads or external tools like tokio and rayon to perform parallel
+/// This extractor can be placed in an `Arc` to be shared between different threads.
+/// You can use plain threads or external tools like Tokio and Rayon to perform parallel
 /// computations. It is important to note, however, that each thread must always use the same
-/// index, to make sure that the same part of the extractor is not
-/// being used by another thread, in a certain moment.
-/// `*_with_instance_*` methods require a `usize` parameter, representing the index of the thread
-/// which is calling the method.
+/// index to ensure that the same part of the extractor is not being used by another thread
+/// at the same time. The `*_with_instance_*` methods require a `usize` parameter, representing
+/// the index of the thread that is calling the method.
 ///
 /// As it is built, the extractor has only one instance available, so it can be used only by one thread
-/// at a time.
-/// Calling [`Self::extend_instances`], one can increase the number of instances.
+/// at a time. By calling [`Self::extend_instances`], you can increase the number of instances.
 ///
-/// So, if one creates an extractor with 10 available instances, threads indices are numbered from 0
+/// If you create an extractor with 10 available instances, thread indices are numbered from 0
 /// to 9.
 ///
 /// ## Examples
@@ -122,14 +120,14 @@ impl<T: CepFloat> CepstrumExtractor<T> {
     /// Extract the real cepstrum mutating the provided slice.
     /// <div class="warning">
     ///
-    /// As for spectrums, the meaningful area will be `signal[0..signal.len() / 2]`.
+    /// As with spectrums, the meaningful area will be `signal[0..signal.len() / 2]`.
     /// </div>
     pub fn rceps_mut(&self, mut signal: &mut [Complex<T>]) {
         self.rceps_with_instance_mut(&mut signal, 0);
     }
 
-    /// Extract the real cepstrum placing the result in a new vec.
-    /// Such a vec will be already truncated to half `signal.len()`.
+    /// Extract the real cepstrum placing the result in a new vector.
+    /// Such a vector will be already truncated to half `signal.len()`.
     pub fn rceps_to_vec(&self, signal: &[Complex<T>]) -> Vec<Complex<T>> {
         let mut copied = signal.to_vec();
 
@@ -147,7 +145,7 @@ impl<T: CepFloat> CepstrumExtractor<T> {
     ///
     /// <div class="warning">
     ///
-    /// As for spectrums, the meaningful area will be `signal[0..signal.len() / 2]`.
+    /// As with spectrums, the meaningful area will be `signal[0..signal.len() / 2]`.
     /// </div>
     pub fn rceps_with_instance_mut(&self, signal: &mut [Complex<T>], instance: usize) {
         self._ceps_with_instance_mut(signal, Self::r_f, instance)
@@ -170,14 +168,14 @@ impl<T: CepFloat> CepstrumExtractor<T> {
     /// Extract the complex cepstrum mutating the provided slice.
     /// <div class="warning">
     ///
-    /// As for spectrums, the meaningful area will be `signal[0..signal.len() / 2]`.
+    /// As with spectrums, the meaningful area will be `signal[0..signal.len() / 2]`.
     /// </div>
     pub fn cceps_mut(&self, mut signal: &mut [Complex<T>]) {
         self.rceps_with_instance_mut(&mut signal, 0);
     }
 
-    /// Extract the complex cepstrum placing the result in a new vec.
-    /// Such a vec will be already truncated to half `signal.len()`.
+    /// Extract the complex cepstrum placing the result in a new vector.
+    /// Such a vector will be already truncated to half `signal.len()`.
     pub fn cceps_to_vec(&self, signal: &[Complex<T>]) -> Vec<Complex<T>> {
         let mut copied = signal.to_vec();
 
@@ -195,7 +193,7 @@ impl<T: CepFloat> CepstrumExtractor<T> {
     ///
     /// <div class="warning">
     ///
-    /// As for spectrums, the meaningful area will be `signal[0..signal.len() / 2]`.
+    /// As with spectrums, the meaningful area will be `signal[0..signal.len() / 2]`.
     /// </div>
     pub fn cceps_with_instance_mut(&self, signal: &mut [Complex<T>], instance: usize) {
         self._ceps_with_instance_mut(signal, Self::c_f, instance)

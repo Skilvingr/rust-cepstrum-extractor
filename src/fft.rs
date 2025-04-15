@@ -43,11 +43,11 @@ impl<T: CepFloat> CepFft<T> {
 
         let new_scratches_len = self.fft_instance.get_inplace_scratch_len();
 
-        for i in self.scratches.lock().unwrap().iter_mut() {
-            if new_scratches_len > i.len() {
-                i.extend(iter::repeat(Complex::zero()).take(new_scratches_len - i.len()));
+        for scratch in self.scratches.lock().unwrap().iter_mut() {
+            if new_scratches_len > scratch.len() {
+                scratch.extend(iter::repeat(Complex::zero()).take(new_scratches_len - scratch.len()));
             } else {
-                i.truncate(new_scratches_len);
+                scratch.truncate(new_scratches_len);
             }
         }
 
@@ -116,10 +116,10 @@ mod tests {
 
         assert_eq!(inst.scratches.lock().unwrap().len(), 10);
 
-        assert!(inst.scratches.lock().unwrap().iter().all(|s| s.len() == inst.len && s.len() == LEN));
+        assert!(inst.scratches.lock().unwrap().iter().all(|s| s.len() == inst.scratch_len && s.len() == LEN));
 
         inst.set_len(LEN * 2);
 
-        assert!(inst.scratches.lock().unwrap().iter().all(|s| s.len() == inst.len && s.len() == LEN * 2));
+        assert!(inst.scratches.lock().unwrap().iter().all(|s| s.len() == inst.scratch_len && s.len() == LEN * 2));
     }
 }

@@ -1,7 +1,8 @@
 <a name="v0.2.0"></a>
-## v0.2.0 (unreleased)
+## v0.2.0 (15/04/2025)
 - `Hann` window has been fixed and moved to `windows::hann:Hann`.
 - Added `Hamming` window.
+- Slight performance improvements.
 
 <a name="v0.1.5"></a>
 ## v0.1.5 (04/04/2025)
@@ -18,11 +19,9 @@
 
 <a name="v0.1.2"></a>
 ## v0.1.2 (19/06/2024)
-
 - Clean types and generics.
-- Hann windows can now be applied to `[Complex]` as well as to `[f32]` and `[f64]`
+- Hann windows can now be applied to `[Complex]` as well as to `[f32]` and `[f64]`.
 
 <a name="v0.1.1"></a>
 ## v0.1.1 (17/06/2024)
-
 Add a new method to set the length of the window for an existent extractor.

@@ -13,7 +13,8 @@ mod cepstrum;
 pub mod windows;
 mod conversions;
 
-/// Trait implemented for types that can be used with the extractor. Currently, `f32` and `f64`.
+/// Trait implemented for types that can be used with the cepstrum extractor. Currently, it supports
+/// `f32` and `f64`.
 pub trait CepFloat: FftNum + Float + FloatConst {}
 
 impl CepFloat for f32 {}

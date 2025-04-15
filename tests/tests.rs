@@ -102,7 +102,7 @@ fn test_multi_thread() {
 }
 
 #[test]
-#[ignore]
+#[cfg_attr(miri, ignore)]
 fn test_multi_thread_rayon() {
     let mut signal: Vec<f32> = vec![];
 

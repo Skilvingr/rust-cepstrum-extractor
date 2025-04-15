@@ -13,44 +13,33 @@
 
 An easy-to-use crate to compute the cepstrum of a signal.
 
-For more info about the concept of cepstrum, [here](https://www.researchgate.net/profile/Samuel-Demir-2/post/Anyone-has-this-paper-quefrency-analysis-of-time-series-for-echoes-cepstrum-pseudo-autocovariance-cross-cepstrum-and-saphe-cracking/attachment/5f0493ca4ba4fb0001a4a3c5/AS%3A910684434989062%401594135497855/download/The+quefrency+analysis+of+time+series+for+echoes.pdf)'s
-the original paper.
-
+For more information about the concept of cepstrum, refer to
+[this original paper](https://www.researchgate.net/profile/Samuel-Demir-2/post/Anyone-has-this-paper-quefrency-analysis-of-time-series-for-echoes-cepstrum-pseudo-autocovariance-cross-cepstrum-and-saphe-cracking/attachment/5f0493ca4ba4fb0001a4a3c5/AS%3A910684434989062%401594135497855/download/The+quefrency+analysis+of+time+series+for+echoes.pdf).
 
 ## Usage
-Quite a simple crate: create a [`CepstrumExtractor`] with a given length and
-use it to compute real or complex cepstrum of a signal.
+This crate is quite simple to use: create a [`CepstrumExtractor`] with a specified length and use it to compute the real or complex cepstrum of a signal.
 
-The extractor accepts a slice of Complex as input, [`RealToComplex::to_complex_vec`]
-creates a new vec of Complex starting from a slice of `f32` or `f64`.
+The extractor accepts a slice of `Complex` as input. The method [`RealToComplex::to_complex_vec`] creates a new vector of `Complex` starting from a slice of `f32` or `f64`.
 
-Such slices also implement windowing functions, more info in the relating module
-[`windows`]
+These slices also implement windowing functions; more information can be found in the related module [`windows`].
 
-## A note about the length of the results:
-As for spectrums, only the first half of the result of a fft has meaningful
-values. Cepstrums are computed with a fft, so here it's the same.
+## A Note About the Length of the Results
+As with spectrums, only the first half of the result of an FFT has meaningful values. Cepstrums are computed using an FFT, so the same applies here.
 
-Methods that return a vec already truncate the result to half the input slice,
-but `*_mut` methods, the ones which mutate the slice passed as input, clearly can't,
-so pay attention to what you do when using these methods.
+Methods that return a vector already truncate the result to half the input slice. However, `*_mut` methods, which mutate the slice passed as input, cannot do this, so please pay attention when using these methods.
 
-### Example:
-Given a `CepstrumExtractor` with len equal to `128`, `rceps_mut` mutates the
-input slice (long 128 samples as well), but only the first `64` samples of
-the mutated slice actually represent the cepstrum.
+### Example
+Given a `CepstrumExtractor` with a length equal to `128`, the `rceps_mut` method mutates the input slice (which should also be 128 samples long), but only the first `64` samples of the mutated slice actually represent the cepstrum.
 
-## A note about multithreading:
-This crate can also be used in a concurrent environment. Only one instance
-of the extractor is needed, and that can be shared between the threads with
-a simple `Arc`; more info about this are available in the relative docs page.
+## A Note About Multithreading
+This crate can also be used in a concurrent environment. Only one instance of the extractor is needed, and it can be shared between threads using a simple `Arc`. More information about this can be found in the relevant documentation page.
 
-An example can be found within `example` folder, under the name `concurrent`.
+An example can be found in the `example` folder, under the name `concurrent`.
 
-## Tests and examples
-Miri test can be found within `script`.
+## Tests and Examples
+Miri tests can be found in the `scripts` directory.
 
-The following commands must be run starting from the root of the crate.
+The following commands must be run from the root of the crate.
 
 Tests can be run with:
 
@@ -60,10 +49,10 @@ cargo test
 
 Benchmarks can be run with:
 ```shell
-RUSTFLAGS="--cfg bench" cargo +nightly bench
+cargo bench
 ```
 
-Concurrent example can be run with:
+The concurrent example can be run with:
 ```shell
 RUSTFLAGS="--cfg examples" cargo run --example concurrent
 ```

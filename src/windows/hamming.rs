@@ -14,13 +14,13 @@ use crate::num_traits::{AsPrimitive, Float, FloatConst};
 pub trait Hamming<T> {
     /// Applies a Hamming window, modifying the slice.
     fn hamming(&mut self) -> &mut [T];
-    /// Applies a Hamming window, returning a new vec of complex.
+    /// Applies a Hamming window, returning a new vector of complex numbers.
     fn hamming_complex(&self) -> Vec<Complex<T>>;
 }
 
 /// Trait used to prepare a slice of complex to be passed to the extractor.
 pub trait HammingComplex<T> {
-    /// Applies a Hamming window, returning a new vec of complex.
+    /// Applies a Hamming window, returning a new vector of complex numbers.
     fn hamming(&self) -> Vec<Complex<T>>;
 
     /// Applies a Hamming window, mutating the slice.
@@ -29,9 +29,10 @@ pub trait HammingComplex<T> {
 
 #[inline(always)]
 fn _hamming<T: Float + FloatConst + 'static>(sample: &T, i: usize, len: usize) -> T
-where usize: AsPrimitive<T>,
-      f32: AsPrimitive<T>,
-      f64: AsPrimitive<T>
+where
+    usize: AsPrimitive<T>,
+    f32: AsPrimitive<T>,
+    f64: AsPrimitive<T>
 {
     *sample * (
         0.54.as_() - (
@@ -44,9 +45,10 @@ where usize: AsPrimitive<T>,
 
 #[inline(always)]
 fn hamming_complex<T: Copy + Float + FloatConst + 'static>(this: &[T]) -> Vec<Complex<T>>
-where usize: AsPrimitive<T>,
-      f32: AsPrimitive<T>,
-      f64: AsPrimitive<T>
+where
+    usize: AsPrimitive<T>,
+    f32: AsPrimitive<T>,
+    f64: AsPrimitive<T>
 {
     this.iter().enumerate().fold(Vec::with_capacity(this.len()), |mut acc, (i, sample)| {
         acc.push(Complex::from(_hamming(sample, i, this.len())));
@@ -56,9 +58,10 @@ where usize: AsPrimitive<T>,
 }
 #[inline(always)]
 fn hamming<T: Copy + Float + FloatConst + 'static>(this: &mut [T])
-where usize: AsPrimitive<T>,
-      f32: AsPrimitive<T>,
-      f64: AsPrimitive<T>
+where
+    usize: AsPrimitive<T>,
+    f32: AsPrimitive<T>,
+    f64: AsPrimitive<T>
 {
     let len = this.len();
     for (i, el) in this.iter_mut().enumerate() {
@@ -67,9 +70,10 @@ where usize: AsPrimitive<T>,
 }
 
 impl<T: Float + FloatConst + 'static> Hamming<T> for [T]
-where usize: AsPrimitive<T>,
-      f32: AsPrimitive<T>,
-      f64: AsPrimitive<T>
+where
+    usize: AsPrimitive<T>,
+    f32: AsPrimitive<T>,
+    f64: AsPrimitive<T>
 {
     #[inline]
     fn hamming(&mut self) -> &mut [T] {
@@ -84,9 +88,10 @@ where usize: AsPrimitive<T>,
 }
 
 impl<T: Float + FloatConst + 'static> HammingComplex<T> for [Complex<T>]
-where usize: AsPrimitive<T>,
-      f32: AsPrimitive<T>,
-      f64: AsPrimitive<T>
+where
+    usize: AsPrimitive<T>,
+    f32: AsPrimitive<T>,
+    f64: AsPrimitive<T>
 {
     #[inline]
     fn hamming(&self) -> Vec<Complex<T>> {

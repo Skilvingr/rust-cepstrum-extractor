@@ -1,5 +1,3 @@
-#![cfg(bench)]
-
 use cepstrum_extractor::{CepstrumExtractor, RealToComplex};
 
 const BUF_LEN: usize = 4096;
