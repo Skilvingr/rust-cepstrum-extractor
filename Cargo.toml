@@ -1,7 +1,7 @@
 [package]
 name = "cepstrum-extractor"
-version = "0.2.0"
-edition = "2021"
+version = "0.2.1"
+edition = "2024"
 readme = "README.md"
 authors = ["Skilfingr <skilvingr@gmail.com>"]
 
@@ -13,7 +13,7 @@ categories = ["multimedia", "multimedia::audio", "science"]
 documentation = "https://docs.rs/cepstrum-extractor"
 
 [dependencies]
-rustfft = "6.2.0"
+rustfft = "6.4"
 
 [dev-dependencies]
 divan = "0.1.21"

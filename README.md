@@ -54,10 +54,10 @@ cargo bench
 
 The concurrent example can be run with:
 ```shell
-RUSTFLAGS="--cfg examples" cargo run --example concurrent
+cargo run --example concurrent
 ```
 
 Other examples can be run with:
 ```shell
-RUSTFLAGS="--cfg examples" cargo run --example `example_name`
+cargo run --example `example_name`
 ```

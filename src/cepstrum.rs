@@ -1,8 +1,8 @@
 //! Module used to extract cepstrums.
 
-use crate::CepFloat;
 use crate::fft::CepFft;
 use crate::num_complex::{Complex, ComplexFloat};
+use crate::CepFloat;
 
 /// The main struct of this crate; can be used to extract both complex and real cepstrums from a signal.
 ///
@@ -32,7 +32,7 @@ use crate::num_complex::{Complex, ComplexFloat};
 /// real_ceps.truncate(real_ceps.len() / 2);
 ///
 /// let mut complex_ceps = signal.clone();
-/// extractor.rceps_mut(&mut complex_ceps);
+/// extractor.cceps_mut(&mut complex_ceps);
 /// complex_ceps.truncate(complex_ceps.len() / 2);
 /// ```
 ///
@@ -84,7 +84,12 @@ pub struct CepstrumExtractor<T: CepFloat> {
 }
 
 impl<T: CepFloat> CepstrumExtractor<T> {
-    fn _ceps_with_instance_mut(&self, mut signal: &mut [Complex<T>], f: fn(&Complex<T>) -> Complex<T>, instance: usize) {
+    fn _ceps_with_instance_mut(
+        &self,
+        mut signal: &mut [Complex<T>],
+        f: fn(&Complex<T>) -> Complex<T>,
+        instance: usize,
+    ) {
         self.fft_instance.do_fft(&mut signal, instance);
 
         signal.iter_mut().for_each(|fft_component| {
@@ -94,12 +99,11 @@ impl<T: CepFloat> CepstrumExtractor<T> {
         self.fft_instance.do_ifft(&mut signal, instance);
     }
 
-
     /// Builds a new extractor with a single instance available, i.e. an extractor to be used in a
     /// single-threaded environment.
     pub fn new(win_len: usize) -> CepstrumExtractor<T> {
         Self {
-            fft_instance: CepFft::new(win_len)
+            fft_instance: CepFft::new(win_len),
         }
     }
 
@@ -113,9 +117,7 @@ impl<T: CepFloat> CepstrumExtractor<T> {
         self.fft_instance.extend_scratches(new_count);
     }
 
-
     // ----------------------------------------- REAL ----------------------------------------------
-
 
     /// Extract the real cepstrum mutating the provided slice.
     /// <div class="warning">
@@ -139,7 +141,11 @@ impl<T: CepFloat> CepstrumExtractor<T> {
 
     #[inline]
     fn r_f(x: &Complex<T>) -> Complex<T> {
-        Complex::from(if x.re == T::zero() { x.abs() } else { x.abs().ln() })
+        Complex::from(if x.re == T::zero() {
+            x.abs()
+        } else {
+            x.abs().ln()
+        })
     }
     /// As [`Self::rceps_mut`], but uses the passed instance at index `instance`.
     ///
@@ -152,7 +158,11 @@ impl<T: CepFloat> CepstrumExtractor<T> {
     }
 
     /// As [`Self::rceps_to_vec`], but uses the passed instance at index `instance`.
-    pub fn rceps_with_instance_to_vec(&self, signal: &[Complex<T>], instance: usize) -> Vec<Complex<T>> {
+    pub fn rceps_with_instance_to_vec(
+        &self,
+        signal: &[Complex<T>],
+        instance: usize,
+    ) -> Vec<Complex<T>> {
         let mut copied = signal.to_vec();
 
         self.rceps_with_instance_mut(&mut copied, instance);
@@ -161,9 +171,7 @@ impl<T: CepFloat> CepstrumExtractor<T> {
         copied
     }
 
-
     // --------------------------------------- COMPLEX ---------------------------------------------
-
 
     /// Extract the complex cepstrum mutating the provided slice.
     /// <div class="warning">
@@ -187,7 +195,11 @@ impl<T: CepFloat> CepstrumExtractor<T> {
 
     #[inline]
     fn c_f(x: &Complex<T>) -> Complex<T> {
-        if x.re == T::zero() { *x } else { x.ln() }
+        if x.re == T::zero() {
+            *x
+        } else {
+            x.ln()
+        }
     }
     /// As [`Self::cceps_mut`], but uses the passed instance at index `instance`.
     ///
@@ -200,7 +212,11 @@ impl<T: CepFloat> CepstrumExtractor<T> {
     }
 
     /// As [`Self::cceps_to_vec`], but uses the passed instance at index `instance`.
-    pub fn cceps_with_instance_to_vec(&self, signal: &[Complex<T>], instance: usize) -> Vec<Complex<T>> {
+    pub fn cceps_with_instance_to_vec(
+        &self,
+        signal: &[Complex<T>],
+        instance: usize,
+    ) -> Vec<Complex<T>> {
         let mut copied = signal.to_vec();
 
         self.rceps_with_instance_mut(&mut copied, instance);

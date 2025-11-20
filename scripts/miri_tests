@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export MIRIFLAGS="-Zmiri-disable-isolation ${MIRIFLAGS:-}"
+export MIRIFLAGS="-Zmiri-disable-isolation -Zmiri-no-extra-rounding-error ${MIRIFLAGS:-}"
 
 cargo +nightly miri test &&
 cargo +nightly miri run --example concurrent

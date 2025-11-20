@@ -1,0 +1,17 @@
+#!/bin/bash
+
+test() {
+    export RUSTFLAGS="-Zsanitizer=$1"
+
+    cargo +nightly test -Zbuild-std --target x86_64-unknown-linux-gnu --test tests
+    cargo +nightly run -Zbuild-std --target x86_64-unknown-linux-gnu --example concurrent
+}
+
+echo "Running Address sanitiser..." &&
+test address &&
+echo "Running Leak sanitiser..." &&
+test leak &&
+echo "Running Memory sanitiser..." &&
+test memory &&
+echo "Running Thread sanitiser..." &&
+test thread
